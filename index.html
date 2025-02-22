@@ -1,58 +1,38 @@
-import { useState } from "react";
-
-export default function Home() {
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("girlfriend");
-  const [expiry, setExpiry] = useState(10);
-  const [loading, setLoading] = useState(false);
-  const [generatedLink, setGeneratedLink] = useState("");
-
-  const generateLink = async () => {
-    setLoading(true);
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, gender, expiry }),
-    });
-    const data = await response.json();
-    setGeneratedLink(data.link);
-    setLoading(false);
-  };
-
-  return (
-    <div className="container">
-      <h1>Be My {gender === "girlfriend" ? "Girlfriend" : "Boyfriend"} 💖</h1>
-      <div className="form">
-        <input
-          type="text"
-          placeholder="Your Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <select value={gender} onChange={(e) => setGender(e.target.value)}>
-          <option value="girlfriend">Girlfriend</option>
-          <option value="boyfriend">Boyfriend</option>
-        </select>
-        <select value={expiry} onChange={(e) => setExpiry(e.target.value)}>
-          <option value="1">1 Minute</option>
-          <option value="10">10 Minutes</option>
-          <option value="60">1 Hour</option>
-          <option value="120">2 Hours</option>
-          <option value="240">4 Hours</option>
-          <option value="1440">24 Hours</option>
-        </select>
-        <button onClick={generateLink} disabled={loading}>
-          {loading ? "Generating..." : "Generate Link"}
-        </button>
-      </div>
-
-      {loading && <div className="loader"><img src="/cat-loader.gif" alt="Loading..." /></div>}
-
-      {generatedLink && (
-        <div className="result">
-          <p>Your link: <a href={generatedLink} target="_blank">{generatedLink}</a></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Girlfriend/Boyfriend</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Be My Girlfriend/Boyfriend 💖</h1>
+        <div class="form">
+            <input type="text" id="name" placeholder="Your Name">
+            <select id="gender">
+                <option value="girlfriend">Girlfriend</option>
+                <option value="boyfriend">Boyfriend</option>
+            </select>
+            <select id="expiry">
+                <option value="1">1 Minute</option>
+                <option value="10">10 Minutes</option>
+                <option value="60">1 Hour</option>
+                <option value="120">2 Hours</option>
+                <option value="240">4 Hours</option>
+                <option value="1440">24 Hours</option>
+            </select>
+            <button id="generate">Generate Link</button>
         </div>
-      )}
+        <div id="loading" class="hidden">
+            <img src="cat-loader.gif" alt="Loading...">
+        </div>
+        <div id="result" class="hidden">
+            <p>Your link: <a id="generatedLink" href="" target="_blank"></a></p>
+        </div>
+        <button id="themeToggle">🌙 Dark Mode</button>
     </div>
-  );
-}
+    <script src="script.js"></script>
+</body>
+</html>
