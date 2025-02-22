@@ -1,29 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-    <link rel="stylesheet" href="./style.css">
-    <title>Loading Animation | code_wars_official</title>
-</head>
-<body>
-    <div class="loader">
-        <svg viewBox="0 0 80 80">
-            <circle id="test" cx="40" cy="40" r="32"></circle>
-        </svg>
+import { useState } from "react";
+
+export default function Home() {
+  const [name, setName] = useState("");
+  const [gender, setGender] = useState("girlfriend");
+  const [expiry, setExpiry] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState("");
+
+  const generateLink = async () => {
+    setLoading(true);
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, gender, expiry }),
+    });
+    const data = await response.json();
+    setGeneratedLink(data.link);
+    setLoading(false);
+  };
+
+  return (
+    <div className="container">
+      <h1>Be My {gender === "girlfriend" ? "Girlfriend" : "Boyfriend"} 💖</h1>
+      <div className="form">
+        <input
+          type="text"
+          placeholder="Your Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <select value={gender} onChange={(e) => setGender(e.target.value)}>
+          <option value="girlfriend">Girlfriend</option>
+          <option value="boyfriend">Boyfriend</option>
+        </select>
+        <select value={expiry} onChange={(e) => setExpiry(e.target.value)}>
+          <option value="1">1 Minute</option>
+          <option value="10">10 Minutes</option>
+          <option value="60">1 Hour</option>
+          <option value="120">2 Hours</option>
+          <option value="240">4 Hours</option>
+          <option value="1440">24 Hours</option>
+        </select>
+        <button onClick={generateLink} disabled={loading}>
+          {loading ? "Generating..." : "Generate Link"}
+        </button>
+      </div>
+
+      {loading && <div className="loader"><img src="/cat-loader.gif" alt="Loading..." /></div>}
+
+      {generatedLink && (
+        <div className="result">
+          <p>Your link: <a href={generatedLink} target="_blank">{generatedLink}</a></p>
+        </div>
+      )}
     </div>
-    
-    <div class="loader triangle">
-        <svg viewBox="0 0 86 80">
-            <polygon points="43 8 79 72 7 72"></polygon>
-        </svg>
-    </div>
-    
-    <div class="loader">
-        <svg viewBox="0 0 80 80">
-            <rect x="8" y="8" width="64" height="64"></rect>
-        </svg>
-    </div>
-</body>
-</html>
+  );
+}
