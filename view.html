@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Partner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="message"></h1>
+        <p id="countdown"></p>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get("name");
+        const gender = params.get("gender");
+        const expires = parseInt(params.get("expires"));
+        const id = params.get("id");
+
+        if (!name || !gender || !expires || !id || Date.now() > expires) {
+            document.body.innerHTML = "<h1>This link has expired. 💔</h1>";
+        } else {
+            document.getElementById("message").textContent = `${name}, will you be my ${gender}? 💖`;
+
+            function updateCountdown() {
+                const timeLeft = Math.max(0, expires - Date.now());
+                if (timeLeft === 0) {
+                    document.body.innerHTML = "<h1>This link has expired. 💔</h1>";
+                } else {
+                    document.getElementById("countdown").textContent = `This link will be deleted in ${Math.floor(timeLeft / 1000)}s`;
+                }
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+    </script>
+</body>
+</html>
